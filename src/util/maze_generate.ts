@@ -19,18 +19,22 @@ export class Point {
 
   set_left(point: Point) {
     this.l = point;
+    point.r = this
   }
 
   set_right(point: Point) {
     this.r = point;
+    point.l = this
   }
 
   set_up(point: Point) {
     this.u = point;
+    point.d = this
   }
 
   set_down(point: Point) {
     this.d = point;
+    point.u = this
   }
 
   connect(data: Point) {
