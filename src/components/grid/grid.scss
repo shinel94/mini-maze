@@ -1,0 +1,25 @@
+.grid {
+  display: grid;
+  border: 2px solid #303030
+}
+.grid-head {
+  color: red;
+  font-size: 2rem;
+}
+
+.cell {
+  width: 1.2rem;
+  height: 1.2rem;
+  &--R {
+    background-color: #d0d0d0;
+  }
+  &--W {
+    background-color: #303030;
+  }
+  &--G {
+    background-color: #33a53c;
+  }
+  &--S {
+    background-color: #864fb3;
+  }
+}
