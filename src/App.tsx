@@ -1,3 +1,4 @@
+import confetti from "canvas-confetti";
 import { useRef, useState, KeyboardEvent, useEffect } from "react";
 import "./App.css";
 import Check from "./components/checker/check";
@@ -12,6 +13,7 @@ import {
 function App() {
   const widthRef = useRef<HTMLInputElement>(null);
   const heightRef = useRef<HTMLInputElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [gridInfo, setGridInfo] = useState<GridInfo[][]>([]);
 
@@ -90,14 +92,30 @@ function App() {
       nowIdx[0] === finishIdx[0] &&
       nowIdx[1] === finishIdx[1]
     ) {
-      if (confirm("Clear Maze do you want restart?")) {
-        generateMaze()
+      if (canvasRef.current) {
+        var myConfetti = confetti.create(canvasRef.current, {
+          resize: true,
+          useWorker: true,
+        });
+        myConfetti({
+          particleCount: 100,
+          spread: 160,
+          // any other options from the global
+          // confetti function
+        });
+        setTimeout(() => {
+          myConfetti.reset();
+          if (confirm("Clear Maze do you want restart?")) {
+            generateMaze();
+          }
+        }, 1000);
       }
     }
   }, [gridInfo, nowIdx]);
 
   return (
     <div className="App">
+      <canvas ref={canvasRef}></canvas>
       <div className="maze-header" key={"maze-header"}>
         <label htmlFor="width">Width</label>
         <input type={"number"} id={"width"} min={3} ref={widthRef}></input>

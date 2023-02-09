@@ -4,7 +4,18 @@
   padding: 2rem;
   text-align: center;
 }
+.App {
+  position: relative
+}
+canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+}
 .maze-header {
   display: flex;
   width: 50%;
+
 }
