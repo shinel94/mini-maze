@@ -11,6 +11,7 @@ const Check = (prop: CheckProp) => {
 
   useEffect(() => {
     if (checkRef.current) {
+      // checkRef.current.style.transform = `translate(${prop.positionX * 2 * 1.2 * 16 + 2 + 0.1 * 16}px, ${prop.positionY * 2 * 1.2 * 16 + 2 + 0.1 * 16}px)`
       checkRef.current.style.left = `${prop.positionX * 2 * 1.2 * 16 + 2 + 0.1 * 16}px`
       checkRef.current.style.top = `${prop.positionY * 2 * 1.2 * 16 + 2 + 0.1 * 16}px`
     }

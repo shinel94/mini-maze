@@ -26,34 +26,75 @@ function App() {
   const moveCheck = (event: KeyboardEvent<HTMLDivElement>) => {
     if (!isMoving) {
       setIsMoving(true);
-      const nowPoint = maze[nowIdx[1]][nowIdx[0]]
+      const nowPoint = maze[nowIdx[1]][nowIdx[0]];
       switch (event.key) {
         case "2":
           if (nowPoint.d) {
-            setNowIdx([nowIdx[0], nowIdx[1] + 1])
+            setNowIdx([nowIdx[0], nowIdx[1] + 1]);
           }
           break;
         case "4":
           if (nowPoint.l) {
-            setNowIdx([nowIdx[0] - 1, nowIdx[1]])
+            setNowIdx([nowIdx[0] - 1, nowIdx[1]]);
           }
           break;
         case "8":
           if (nowPoint.u) {
-            setNowIdx([nowIdx[0], nowIdx[1] - 1])
+            setNowIdx([nowIdx[0], nowIdx[1] - 1]);
           }
           break;
         case "6":
           if (nowPoint.r) {
-            setNowIdx([nowIdx[0] + 1, nowIdx[1]])
+            setNowIdx([nowIdx[0] + 1, nowIdx[1]]);
           }
           break;
       }
       setTimeout(() => {
-        setIsMoving(false), 500
-      })
+        setIsMoving(false), 500;
+      });
     }
   };
+
+  const generateMaze = () => {
+    setIsGenerating(true);
+    if (widthRef.current && heightRef.current) {
+      const mazeWidth = Number.parseInt(widthRef.current.value);
+      const mazeHeight = Number.parseInt(heightRef.current.value);
+      generate_maze(
+        mazeWidth < 3 ? 3 : mazeWidth,
+        mazeHeight < 3 ? 3 : mazeHeight
+      )
+        .then((mazeInfo) => {
+          get_grid_info(mazeInfo[0], mazeInfo[1], mazeInfo[2])
+            .then((gridInfo) => {
+              setGridInfo(gridInfo);
+              setMaze(mazeInfo[0]);
+              setStartIdx(mazeInfo[1]);
+              setNowIdx(mazeInfo[1]);
+              setFinishIdx(mazeInfo[2]);
+              setIsMoving(false);
+            })
+            .finally(() => {
+              setIsGenerating(false);
+            });
+        })
+        .catch(() => {
+          setIsGenerating(false);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (
+      gridInfo.length > 0 &&
+      nowIdx[0] === finishIdx[0] &&
+      nowIdx[1] === finishIdx[1]
+    ) {
+      if (confirm("Clear Maze do you want restart?")) {
+        generateMaze()
+      }
+    }
+  }, [gridInfo, nowIdx]);
 
   return (
     <div className="App">
@@ -62,45 +103,18 @@ function App() {
         <input type={"number"} id={"width"} min={3} ref={widthRef}></input>
         <label htmlFor="height">height</label>
         <input type={"number"} id={"height"} min={3} ref={heightRef}></input>
-        <button
-          onClick={() => {
-            setIsGenerating(true);
-            if (widthRef.current && heightRef.current) {
-              const mazeWidth = Number.parseInt(widthRef.current.value);
-              const mazeHeight = Number.parseInt(heightRef.current.value);
-              generate_maze(
-                mazeWidth < 3 ? 3 : mazeWidth,
-                mazeHeight < 3 ? 3 : mazeHeight
-              )
-                .then((mazeInfo) => {
-                  get_grid_info(mazeInfo[0], mazeInfo[1], mazeInfo[2])
-                    .then((gridInfo) => {
-                      setGridInfo(gridInfo);
-                      setMaze(mazeInfo[0]);
-                      setStartIdx(mazeInfo[1]);
-                      setNowIdx(mazeInfo[1]);
-                      setFinishIdx(mazeInfo[2]);
-                      setIsMoving(false)
-                    })
-                    .finally(() => {
-                      setIsGenerating(false);
-                    });
-                })
-                .catch(() => {
-                  setIsGenerating(false);
-                });
-            }
-          }}
-        >
-          Generate
-        </button>
+        <button onClick={generateMaze}>Generate</button>
       </div>
       {isGenerating ? (
         <div>
           <h1> Now generating Maze </h1>
         </div>
       ) : gridInfo.length > 0 ? (
-        <div style={{ display: "flex", position: "relative" }}   onKeyDown={moveCheck} tabIndex={0}>
+        <div
+          style={{ display: "flex", position: "relative" }}
+          onKeyDown={moveCheck}
+          tabIndex={0}
+        >
           <Grid key={"grid-comp"} gridInfo={gridInfo} />
           <Check
             key={"check-comp"}
